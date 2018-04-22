@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Villian Reporter</title>
+</head>
+<body>
+  <h1>Report a suspicous person</h1>
+  <label for="photo">Upload a Photo</label>
+  <input id='photo-upload' type="file" onchange="sendPhoto()" name="photo" id='photo' />
+  <br>
+  <h1>Results</h1>
+  <div id='results'>
+  </div>
+
+    <script>
+
+    function sendPhoto() {
+      console.log('sending')
+      const url = "https://www.headlightlabs.com/api/gcpd_lookup";
+      const api_key = "70QU7EpmZFdzR7Etqq_Tjw";
+      const formData = new FormData();
+      const file = document.getElementById('photo-upload').files[0]
+      const reader = new FileReader
+      reader.readAsDataURL(file)
+      reader.onload = () => {
+        formData.append("api_key", api_key);
+        formData.append("image_contents", reader.result);
+        console.log(formData)
+
+        var request = new XMLHttpRequest();
+        request.open("POST", url);
+        request.send(formData);
+        request.onreadystatechange = function() {
+          if (request.readyState === 4) {
+            saveResponse(request.response);
+          }
+        }
+      }
+    }
+
+    function saveResponse(response) {
+      console.log(response)
+      const res = JSON.parse(response)
+      const resultItem = document.createElement('li')
+      const resultImage = document.createElement('img')
+      resultImage.src = res.location
+      const closestMatch = document.createElement('h2')
+      closestMatch.innerText = 'Closest Match: ' + res.closest_match
+      resultItem.appendChild(resultImage)
+      resultItem.appendChild(closestMatch)
+      document.getElementById('results').appendChild(resultItem)
+    }
+
+
+
+  // Using base64-encoded data
+
+  // var myBase64EncodedImageData = ...; // TODO: Implement!
+
+  // var formData = new FormData();
+  // formData.append("api_key", api_key);
+  // formData.append("image_contents", myBase64EncodedImageData));
+
+  // var request = new XMLHttpRequest();
+  // request.open("POST", url);
+  // request.send(formData);
+
+  </script>
+</body>
+</html>
